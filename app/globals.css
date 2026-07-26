@@ -1426,3 +1426,304 @@ img {
 .status-shipped { background: #0077b6; color: #fff; }
 .status-delivered { background: #28a745; color: #fff; }
 .status-cancelled { background: #dc3545; color: #fff; }
+
+/* ===== RESPONSIVE ===== */
+
+/* Tablet landscape */
+@media (max-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .related-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .benefits-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Tablet / small laptop */
+@media (max-width: 768px) {
+  .header {
+    padding: 15px 20px;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .logo-area img {
+    height: 50px;
+  }
+
+  .search-bar {
+    order: 3;
+    margin: 0;
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .search-bar input {
+    padding: 10px 40px 10px 15px;
+    font-size: 14px;
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
+
+  .header-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .header-btn span {
+    display: none;
+  }
+
+  .header-btn i {
+    font-size: 18px;
+  }
+
+  .products-section {
+    padding: 30px 15px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .products-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .stock-tabs {
+    justify-content: center;
+  }
+
+  .product-image {
+    height: 140px;
+    font-size: 40px;
+  }
+
+  .product-info {
+    padding: 12px;
+  }
+
+  .product-name {
+    font-size: 12px;
+    height: 32px;
+  }
+
+  .product-price {
+    font-size: 16px;
+  }
+
+  .carousel-item {
+    min-width: 260px;
+    padding: 18px 22px;
+  }
+
+  .carousel-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+
+  .benefits-section {
+    padding: 40px 15px;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .benefit-card {
+    padding: 20px;
+  }
+
+  .footer {
+    padding: 40px 20px 20px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .footer-column h4 {
+    margin-bottom: 15px;
+  }
+
+  .product-page .container {
+    padding: 0 15px;
+  }
+
+  .product-main {
+    gap: 20px;
+  }
+
+  .product-title {
+    font-size: 18px;
+  }
+
+  .checkout-container {
+    padding: 0 15px;
+    margin: 20px auto;
+  }
+
+  .checkout-form {
+    padding: 20px;
+  }
+
+  .orders-container {
+    padding: 0 15px;
+    margin: 20px auto;
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .cart-sidebar {
+    width: 100%;
+    right: -100%;
+  }
+
+  .modal {
+    width: 90%;
+    padding: 25px;
+    margin: 0 15px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal h2 {
+    font-size: 20px;
+  }
+
+  /* Admin responsive */
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    padding: 15px 20px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .admin-sidebar h2 {
+    width: auto;
+    margin-bottom: 0;
+    margin-right: 15px;
+    font-size: 16px;
+  }
+
+  .admin-sidebar a {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .admin-sidebar a i {
+    font-size: 14px;
+  }
+
+  .admin-sidebar div:last-child {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+  }
+
+  .admin-content {
+    padding: 20px 15px;
+  }
+
+  .admin-content table,
+  .admin-content table tbody,
+  .admin-content table tr,
+  .admin-content table td,
+  .admin-content table th {
+    display: block;
+  }
+
+  .admin-content table thead {
+    display: none;
+  }
+
+  .admin-content table td {
+    padding: 8px 12px !important;
+    border-bottom: none;
+    position: relative;
+    padding-left: 45% !important;
+  }
+
+  .admin-content table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 12px;
+    top: 8px;
+    font-weight: 600;
+    color: #999;
+    font-size: 12px;
+  }
+
+  .admin-content table tr {
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 15px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .related-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .product-image {
+    height: 120px;
+  }
+
+  .product-name {
+    font-size: 11px;
+    height: 28px;
+  }
+
+  .product-price {
+    font-size: 14px;
+  }
+
+  .main-image {
+    height: 220px;
+  }
+
+  .price {
+    font-size: 24px;
+  }
+
+  .carousel-item {
+    min-width: 220px;
+    padding: 14px 16px;
+  }
+}

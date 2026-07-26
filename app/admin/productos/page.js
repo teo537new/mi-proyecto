@@ -79,7 +79,7 @@ export default function AdminProductos() {
           <tbody>
             {products.map((p) => (
               <tr key={p.id} style={{ borderTop: '1px solid #f0f0f0', opacity: p.active ? 1 : 0.5 }}>
-                <td style={{ padding: '15px 20px', fontWeight: '600' }}>
+                <td data-label="Producto" style={{ padding: '15px 20px', fontWeight: '600' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     {p.images?.[0] && (
                       <img src={p.images[0]} alt="" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '6px' }} />
@@ -87,13 +87,13 @@ export default function AdminProductos() {
                     {p.name}
                   </div>
                 </td>
-                <td style={{ padding: '15px 20px', color: '#ff6b35', fontWeight: '700' }}>
+                <td data-label="Precio" style={{ padding: '15px 20px', color: '#ff6b35', fontWeight: '700' }}>
                   ${Number(p.price).toLocaleString('es-AR')}
                 </td>
-                <td style={{ padding: '15px 20px', fontSize: '14px' }}>
+                <td data-label="Stock" style={{ padding: '15px 20px', fontSize: '14px' }}>
                   {p.stock_type === 'stock' ? `${p.stock_quantity} uds.` : 'A Pedido'}
                 </td>
-                <td style={{ padding: '15px 20px' }}>
+                <td data-label="Estado" style={{ padding: '15px 20px' }}>
                   <button
                     onClick={() => toggleActive(p.id, p.active)}
                     style={{
@@ -111,7 +111,7 @@ export default function AdminProductos() {
                     {p.active ? 'Activo' : 'Pausado'}
                   </button>
                 </td>
-                <td style={{ padding: '15px 20px' }}>
+                <td data-label="Acciones" style={{ padding: '15px 20px' }}>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <Link
                       href={`/admin/productos/editar/${p.id}`}

@@ -55,20 +55,20 @@ export default function AdminUsuarios() {
               </tr>
             </thead>
             <tbody>
-              {users.filter((u) => u.role !== 'admin').map((u) => (
+                  {users.filter((u) => u.role !== 'admin').map((u) => (
                 <tr key={u.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                  <td style={{ padding: '12px', fontWeight: '500' }}>{u.name || '—'}</td>
-                  <td style={{ padding: '12px', color: '#666' }}>{u.email || '—'}</td>
-                  <td style={{ padding: '12px' }}>
+                  <td data-label="Nombre" style={{ padding: '12px', fontWeight: '500' }}>{u.name || '—'}</td>
+                  <td data-label="Email" style={{ padding: '12px', color: '#666' }}>{u.email || '—'}</td>
+                  <td data-label="Rol" style={{ padding: '12px' }}>
                     <span style={{
                       background: '#e8f5e9', color: '#28a745',
                       padding: '3px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: '600',
                     }}>Cliente</span>
                   </td>
-                  <td style={{ padding: '12px', color: '#999', fontSize: '13px' }}>
+                  <td data-label="Registro" style={{ padding: '12px', color: '#999', fontSize: '13px' }}>
                     {u.created_at ? new Date(u.created_at).toLocaleDateString('es-AR') : '—'}
                   </td>
-                  <td style={{ padding: '12px' }}>
+                  <td data-label="" style={{ padding: '12px' }}>
                     <button
                       onClick={() => handleDeleteUser(u.id, u.name)}
                       style={{
