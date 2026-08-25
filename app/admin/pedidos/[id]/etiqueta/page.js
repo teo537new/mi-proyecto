@@ -92,6 +92,20 @@ export default function EtiquetaPage() {
           </div>
         )}
 
+        {order.order_items?.length > 0 && (
+          <div className="label-section">
+            <span className="label-title">Contenido</span>
+            <ul className="label-items">
+              {order.order_items.map((item) => (
+                <li key={item.id}>
+                  <span>{item.quantity}x {item.product_name}</span>
+                  <strong>${(item.unit_price * item.quantity).toLocaleString('es-AR')}</strong>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div className="label-footer">
           <span>
             {totalItems} artículo{totalItems !== 1 ? 's' : ''}

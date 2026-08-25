@@ -1802,6 +1802,27 @@ img {
   line-height: 1.5;
 }
 
+.label-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.label-items li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 4px 0;
+  font-size: 13px;
+  color: #333;
+}
+
+.label-items li strong {
+  white-space: nowrap;
+  color: #1a1a2e;
+}
+
 .label-footer {
   display: flex;
   justify-content: space-between;
