@@ -100,7 +100,6 @@ export default function AdminPedidos() {
                 </span>
                 <Link
                   href={`/admin/pedidos/${order.id}/etiqueta`}
-                  target="_blank"
                   style={{
                     background: 'none',
                     border: 'none',
