@@ -1727,3 +1727,125 @@ img {
     padding: 14px 16px;
   }
 }
+
+/* ===== ETIQUETA DE ENVÍO ===== */
+.shipping-label {
+  background: #fff;
+  border: 2px solid #1a1a2e;
+  border-radius: 10px;
+  padding: 25px;
+  max-width: 420px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
+}
+
+.label-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #1a1a2e;
+  margin-bottom: 18px;
+}
+
+.label-logo {
+  height: 45px;
+  object-fit: contain;
+}
+
+.label-order {
+  text-align: right;
+}
+
+.label-order strong {
+  display: block;
+  font-size: 16px;
+  color: #1a1a2e;
+}
+
+.label-order span {
+  font-size: 12px;
+  color: #777;
+}
+
+.label-section {
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed #ccc;
+}
+
+.label-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.label-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #00a8cc;
+  margin-bottom: 4px;
+}
+
+.label-big {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1.3;
+}
+
+.label-text {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.label-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 2px solid #1a1a2e;
+  font-size: 13px;
+  color: #666;
+}
+
+.label-footer strong {
+  font-size: 17px;
+  color: #ff6b35;
+}
+
+/* Impresión: solo la etiqueta */
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .admin-sidebar,
+  .no-print,
+  .header,
+  .footer,
+  .toast {
+    display: none !important;
+  }
+
+  .admin-layout {
+    display: block !important;
+    min-height: auto !important;
+  }
+
+  .admin-content {
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  .shipping-label {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 0;
+    padding: 20px;
+  }
+}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 const statuses = ['pending', 'paid', 'preparing', 'shipped', 'delivered', 'cancelled']
@@ -97,6 +98,21 @@ export default function AdminPedidos() {
                 <span className={`order-status status-${order.status}`}>
                   {statusLabels[order.status]}
                 </span>
+                <Link
+                  href={`/admin/pedidos/${order.id}/etiqueta`}
+                  target="_blank"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#00a8cc',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    padding: '4px 8px',
+                  }}
+                  title="Imprimir etiqueta de envío"
+                >
+                  <i className="fas fa-print"></i>
+                </Link>
                 <button
                   onClick={() => handleDelete(order.id)}
                   style={{
