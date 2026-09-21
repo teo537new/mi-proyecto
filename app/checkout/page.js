@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { QRCodeSVG } from 'qrcode.react'
 import { useAuth } from '@/lib/context/auth-context'
 import { useCart } from '@/lib/context/cart-context'
 import { createClient } from '@/lib/supabase/client'
+import { buildTransferQR } from '@/lib/qr-code'
 
 export default function CheckoutPage() {
   const { user } = useAuth()
@@ -31,6 +32,16 @@ export default function CheckoutPage() {
       if (data) setSettings(data)
     })
   }, [])
+
+  const qrPayload = useMemo(() => {
+    if (!settings?.cuit || !settings?.cbu_number) return null
+    return buildTransferQR({
+      cuit: settings.cuit,
+      cbu: settings.cbu_number,
+      name: settings.store_name,
+      city: settings.store_city,
+    })
+  }, [settings])
 
   if (!user) {
     return (
@@ -188,7 +199,27 @@ export default function CheckoutPage() {
               </p>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
                 <div style={{ background: '#fff', padding: '16px', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
-                  <QRCodeSVG value={settings.cbu_alias} size={200} />
+                  {qrPayload ? (
+                    <QRCodeSVG value={qrPayload} size={200} />
+                  ) : (
+                    <div
+                      style={{
+                        width: 200,
+                        height: 200,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: '#fafafa',
+                        borderRadius: '8px',
+                        color: '#bbb',
+                        fontSize: '13px',
+                        textAlign: 'center',
+                        padding: '20px',
+                      }}
+                    >
+                      El comercio aún no configuró el CUIT. Podés transferir con el alias/CBU de abajo.
+                    </div>
+                  )}
                 </div>
               </div>
               <div style={{ background: '#fff', border: '2px solid #28a745', borderRadius: '10px', padding: '15px', marginBottom: '5px' }}>
