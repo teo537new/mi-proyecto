@@ -1,12 +1,27 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { useRouter } from 'next/navigation'
-import { QRCodeSVG } from 'qrcode.react'
 import { useAuth } from '@/lib/context/auth-context'
 import { useCart } from '@/lib/context/cart-context'
 import { createClient } from '@/lib/supabase/client'
-import { buildTransferQR } from '@/lib/qr-code'
+
+const BANKS = [
+  'Mercado Pago',
+  'MODO',
+  'Banco Nación',
+  'Banco Galicia',
+  'Banco Provincia',
+  'Santander',
+  'BBVA',
+  'Otro',
+]
+
+const STEPS = [
+  { n: 1, label: 'Cuenta' },
+  { n: 2, label: 'Envío' },
+  { n: 3, label: 'Pago' },
+]
 
 export default function CheckoutPage() {
   const { user } = useAuth()
@@ -16,7 +31,12 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
   const [settings, setSettings] = useState(null)
+  const [step, setStep] = useState(1)
+  const [copied, setCopied] = useState(null)
   const [form, setForm] = useState({
+    acct_origin: '',
+    acct_holder: '',
+    acct_number: '',
     name: '',
     address: '',
     barrio: '',
@@ -32,16 +52,6 @@ export default function CheckoutPage() {
       if (data) setSettings(data)
     })
   }, [])
-
-  const qrPayload = useMemo(() => {
-    if (!settings?.cuit || !settings?.cbu_number) return null
-    return buildTransferQR({
-      cuit: settings.cuit,
-      cbu: settings.cbu_number,
-      name: settings.store_name,
-      city: settings.store_city,
-    })
-  }, [settings])
 
   if (!user) {
     return (
@@ -67,6 +77,47 @@ export default function CheckoutPage() {
     )
   }
 
+  const update = (field) => (e) => setForm({ ...form, [field]: e.target.value })
+
+  const copyToClipboard = async (key, value) => {
+    if (!value) return
+    try {
+      await navigator.clipboard.writeText(value)
+      setCopied(key)
+      setTimeout(() => setCopied(null), 2000)
+    } catch {
+      alert('No se pudo copiar automáticamente. Copiá manualmente: ' + value)
+    }
+  }
+
+  const validateStep1 = () => {
+    if (!form.acct_origin) {
+      alert('Elegí el banco o billetera desde donde vas a transferir.')
+      return false
+    }
+    if (!form.acct_holder.trim()) {
+      alert('Ingresá el nombre del titular de la cuenta de origen.')
+      return false
+    }
+    return true
+  }
+
+  const validateStep2 = () => {
+    if (!form.name.trim()) return alert('Ingresá tu nombre completo.'), false
+    if (!form.address.trim()) return alert('Ingresá la dirección de envío.'), false
+    if (!form.ciudad.trim()) return alert('Ingresá la ciudad.'), false
+    if (!form.phone.trim()) return alert('Ingresá tu teléfono.'), false
+    return true
+  }
+
+  const goNext = () => {
+    if (step === 1 && !validateStep1()) return
+    if (step === 2 && !validateStep2()) return
+    setStep((s) => Math.min(s + 1, 3))
+  }
+
+  const goBack = () => setStep((s) => Math.max(s - 1, 1))
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -76,6 +127,9 @@ export default function CheckoutPage() {
       .insert({
         user_id: user.id,
         total,
+        acct_origin: form.acct_origin,
+        acct_holder: form.acct_holder.trim(),
+        acct_number: form.acct_number.trim() || null,
         shipping_name: form.name,
         shipping_address: form.address,
         shipping_barrio: form.barrio || null,
@@ -120,8 +174,6 @@ export default function CheckoutPage() {
     setLoading(false)
   }
 
-  const update = (field) => (e) => setForm({ ...form, [field]: e.target.value })
-
   if (done) {
     return (
       <div className="checkout-container">
@@ -143,106 +195,196 @@ export default function CheckoutPage() {
     <div className="checkout-container">
       <h1>Finalizar Compra</h1>
 
+      <div className="checkout-steps">
+        {STEPS.map((s, i) => (
+          <Fragment key={s.n}>
+            {i > 0 && <div className="step-line" />}
+            <div className={`checkout-step ${step === s.n ? 'active' : ''} ${step > s.n ? 'done' : ''}`}>
+              <span className="step-num">{step > s.n ? '✓' : s.n}</span>
+              <span>{s.label}</span>
+            </div>
+          </Fragment>
+        ))}
+      </div>
+
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '40px', alignItems: 'start' }}>
         <form className="checkout-form" onSubmit={handleSubmit}>
-          <h3>Datos Personales y Envío</h3>
-
-          <div className="form-group">
-            <label>Nombre completo</label>
-            <input className="form-control" value={form.name} onChange={update('name')} required />
-          </div>
-
-          <div className="form-group">
-            <label>Dirección de envío</label>
-            <input className="form-control" value={form.address} onChange={update('address')} required />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-            <div className="form-group">
-              <label>Barrio</label>
-              <input className="form-control" value={form.barrio} onChange={update('barrio')} />
-            </div>
-            <div className="form-group">
-              <label>Ciudad</label>
-              <input className="form-control" value={form.ciudad} onChange={update('ciudad')} required />
-            </div>
-            <div className="form-group">
-              <label>Partido</label>
-              <input className="form-control" value={form.partido} onChange={update('partido')} />
-            </div>
-            <div className="form-group">
-              <label>Código Postal</label>
-              <input className="form-control" value={form.codigo_postal} onChange={update('codigo_postal')} />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label>Teléfono</label>
-            <input className="form-control" value={form.phone} onChange={update('phone')} required />
-          </div>
-
-          <div className="form-group">
-            <label>Notas (opcional)</label>
-            <textarea className="form-control" rows="3" value={form.notes} onChange={update('notes')}></textarea>
-          </div>
-
-          <h3 style={{ marginTop: '30px' }}>Método de Pago</h3>
-
-          {settings ? (
-            <div style={{ background: '#f0faf0', border: '1px solid #d4edda', borderRadius: '8px', padding: '20px', marginBottom: '20px' }}>
-              <p style={{ fontWeight: '600', color: '#155724', marginBottom: '15px' }}>
-                <i className="fas fa-university" style={{ marginRight: '8px' }}></i>
-                Transferencia Bancaria
+          {step === 1 && (
+            <>
+              <h3>Paso 1 · ¿Desde qué cuenta transferís?</h3>
+              <p style={{ fontSize: '13px', color: '#666', marginTop: '-10px', marginBottom: '20px' }}>
+                De dónde va a salir la plata. Nos sirve para verificar tu pago.
               </p>
-              <p style={{ fontSize: '13px', color: '#555', marginBottom: '15px' }}>
-                Escaneá el QR o transferí manualmente desde tu billetera virtual / home banking.
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-                <div style={{ background: '#fff', padding: '16px', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
-                  {qrPayload ? (
-                    <QRCodeSVG value={qrPayload} size={200} />
-                  ) : (
-                    <div
-                      style={{
-                        width: 200,
-                        height: 200,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: '#fafafa',
-                        borderRadius: '8px',
-                        color: '#bbb',
-                        fontSize: '13px',
-                        textAlign: 'center',
-                        padding: '20px',
-                      }}
-                    >
-                      El comercio aún no configuró el CUIT. Podés transferir con el alias/CBU de abajo.
-                    </div>
-                  )}
-                </div>
+
+              <div className="form-group">
+                <label>Banco o billetera</label>
+                <select className="form-control" value={form.acct_origin} onChange={update('acct_origin')}>
+                  <option value="">Seleccioná...</option>
+                  {BANKS.map((b) => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
               </div>
-              <div style={{ background: '#fff', border: '2px solid #28a745', borderRadius: '10px', padding: '15px', marginBottom: '5px' }}>
-                <p style={{ fontSize: '13px', color: '#155724', fontWeight: '600', marginBottom: '10px' }}>
-                  <i className="fas fa-shield-alt"></i> Verificá que los datos coincidan antes de transferir:
-                </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #e8f5e9', fontSize: '14px' }}>
-                  <span style={{ color: '#666' }}>Alias:</span>
-                  <strong style={{ color: '#1a1a2e', fontSize: '16px' }}>{settings.cbu_alias}</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: '14px' }}>
-                  <span style={{ color: '#666' }}>CBU:</span>
-                  <strong style={{ color: '#1a1a2e', fontSize: '16px' }}>{settings.cbu_number || '—'}</strong>
-                </div>
+
+              <div className="form-group">
+                <label>Titular de la cuenta</label>
+                <input
+                  className="form-control"
+                  value={form.acct_holder}
+                  onChange={update('acct_holder')}
+                  placeholder="Nombre y apellido como figura en la cuenta"
+                />
               </div>
-            </div>
-          ) : (
-            <p style={{ color: '#999', fontStyle: 'italic' }}>Cargando datos de pago...</p>
+
+              <div className="form-group">
+                <label>CBU/CVU de origen (opcional)</label>
+                <input
+                  className="form-control"
+                  value={form.acct_number}
+                  onChange={update('acct_number')}
+                  placeholder="Opcional"
+                />
+              </div>
+
+              <button type="button" className="btn-buy" onClick={goNext} style={{ fontSize: '16px', padding: '16px' }}>
+                Continuar
+              </button>
+            </>
           )}
 
-          <button type="submit" className="btn-buy" disabled={loading} style={{ fontSize: '16px', padding: '16px' }}>
-            {loading ? 'Procesando...' : 'Ya transferí'}
-          </button>
+          {step === 2 && (
+            <>
+              <h3>Paso 2 · Datos de envío</h3>
+
+              <div className="form-group">
+                <label>Nombre completo</label>
+                <input className="form-control" value={form.name} onChange={update('name')} required />
+              </div>
+
+              <div className="form-group">
+                <label>Dirección de envío</label>
+                <input className="form-control" value={form.address} onChange={update('address')} required />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                <div className="form-group">
+                  <label>Barrio</label>
+                  <input className="form-control" value={form.barrio} onChange={update('barrio')} />
+                </div>
+                <div className="form-group">
+                  <label>Ciudad</label>
+                  <input className="form-control" value={form.ciudad} onChange={update('ciudad')} required />
+                </div>
+                <div className="form-group">
+                  <label>Partido</label>
+                  <input className="form-control" value={form.partido} onChange={update('partido')} />
+                </div>
+                <div className="form-group">
+                  <label>Código Postal</label>
+                  <input className="form-control" value={form.codigo_postal} onChange={update('codigo_postal')} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Teléfono</label>
+                <input className="form-control" value={form.phone} onChange={update('phone')} required />
+              </div>
+
+              <div className="form-group">
+                <label>Notas (opcional)</label>
+                <textarea className="form-control" rows="3" value={form.notes} onChange={update('notes')}></textarea>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  type="button"
+                  onClick={goBack}
+                  style={{ flex: 1, padding: '16px', fontSize: '16px', background: '#fff', color: '#666', border: '2px solid #e0e0e0', borderRadius: '10px', cursor: 'pointer', fontWeight: '600' }}
+                >
+                  Volver
+                </button>
+                <button type="button" className="btn-buy" onClick={goNext} style={{ flex: 2, fontSize: '16px', padding: '16px' }}>
+                  Continuar
+                </button>
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
+            <>
+              <h3>Paso 3 · Transferí y avisá</h3>
+
+              {settings ? (
+                <div style={{ background: '#f0faf0', border: '1px solid #d4edda', borderRadius: '8px', padding: '20px', marginBottom: '20px' }}>
+                  <p style={{ fontSize: '14px', color: '#155724', marginBottom: '15px' }}>
+                    Transferí exactamente{' '}
+                    <strong>${total.toLocaleString('es-AR')}</strong> a esta cuenta.
+                    Las transferencias entre personas son <strong>sin comisión</strong>.
+                  </p>
+
+                  <div style={{ background: '#fff', border: '2px solid #28a745', borderRadius: '10px', padding: '15px' }}>
+                    <p style={{ fontSize: '13px', color: '#155724', fontWeight: '600', marginBottom: '10px' }}>
+                      <i className="fas fa-shield-alt"></i> Datos para transferir:
+                    </p>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', padding: '6px 0', borderBottom: '1px solid #e8f5e9', fontSize: '14px' }}>
+                      <span style={{ color: '#666' }}>Titular:</span>
+                      <strong style={{ color: '#1a1a2e', fontSize: '15px', textAlign: 'right' }}>{settings.store_name || '—'}</strong>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', padding: '6px 0', borderBottom: '1px solid #e8f5e9', fontSize: '14px' }}>
+                      <span style={{ color: '#666' }}>Alias:</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <strong style={{ color: '#1a1a2e', fontSize: '16px' }}>{settings.cbu_alias || '—'}</strong>
+                        <button type="button" className={`copy-btn ${copied === 'alias' ? 'copied' : ''}`} onClick={() => copyToClipboard('alias', settings.cbu_alias)}>
+                          {copied === 'alias' ? '¡Copiado!' : 'Copiar'}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', padding: '6px 0', fontSize: '14px' }}>
+                      <span style={{ color: '#666' }}>CBU/CVU:</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <strong style={{ color: '#1a1a2e', fontSize: '14px' }}>{settings.cbu_number || '—'}</strong>
+                        {settings.cbu_number && (
+                          <button type="button" className={`copy-btn ${copied === 'cbu' ? 'copied' : ''}`} onClick={() => copyToClipboard('cbu', settings.cbu_number)}>
+                            {copied === 'cbu' ? '¡Copiado!' : 'Copiar'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: '15px', fontSize: '13px', color: '#666', lineHeight: '1.9' }}>
+                    <strong style={{ color: '#155724' }}>Pasos:</strong>
+                    <div>1. Abrí tu billetera (Mercado Pago, MODO o la app de tu banco).</div>
+                    <div>2. Tocá &quot;Transferir&quot; e ingresá el alias o el CBU/CVU de arriba.</div>
+                    <div>3. Confirmá la transferencia por el total de tu pedido.</div>
+                    <div>4. Volvé acá y tocá &quot;Ya transferí&quot;.</div>
+                  </div>
+
+                  <p style={{ fontSize: '12px', color: '#888', marginTop: '12px' }}>
+                    Vas a transferir desde <strong>{form.acct_origin}</strong> a nombre de <strong>{form.acct_holder}</strong>.
+                  </p>
+                </div>
+              ) : (
+                <p style={{ color: '#999', fontStyle: 'italic' }}>Cargando datos de pago...</p>
+              )}
+
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  type="button"
+                  onClick={goBack}
+                  style={{ flex: 1, padding: '16px', fontSize: '16px', background: '#fff', color: '#666', border: '2px solid #e0e0e0', borderRadius: '10px', cursor: 'pointer', fontWeight: '600' }}
+                >
+                  Volver
+                </button>
+                <button type="submit" className="btn-buy" disabled={loading} style={{ flex: 2, fontSize: '16px', padding: '16px' }}>
+                  {loading ? 'Procesando...' : 'Ya transferí'}
+                </button>
+              </div>
+            </>
+          )}
         </form>
 
         <div style={{ background: '#fff', borderRadius: '14px', padding: '25px', border: '1px solid #e8e8e8' }}>

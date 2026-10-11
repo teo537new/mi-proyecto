@@ -139,6 +139,14 @@ export default function AdminPedidos() {
               <br />
               <i className="fas fa-phone"></i> {order.shipping_phone}<br />
               <i className="fas fa-credit-card"></i> {order.payment_method === 'transfer' ? 'Transferencia' : 'Mercado Pago'}
+              {order.payment_method === 'transfer' && order.acct_origin && (
+                <>
+                  <br />
+                  <i className="fas fa-wallet"></i> Transfiere desde: {order.acct_origin}
+                  {order.acct_holder && <> &mdash; Titular: {order.acct_holder}</>}
+                  {order.acct_number && <> &mdash; CBU/CVU: {order.acct_number}</>}
+                </>
+              )}
               {order.notes && <><br /><i className="fas fa-sticky-note"></i> Nota: {order.notes}</>}
             </div>
 

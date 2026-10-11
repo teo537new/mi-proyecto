@@ -1362,6 +1362,79 @@ img {
   border-bottom: 2px solid #00a8cc;
 }
 
+.checkout-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.checkout-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #999;
+}
+
+.checkout-step .step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.checkout-step.active {
+  color: #00a8cc;
+}
+
+.checkout-step.active .step-num {
+  background: #00a8cc;
+}
+
+.checkout-step.done {
+  color: #00a650;
+}
+
+.checkout-step.done .step-num {
+  background: #00a650;
+}
+
+.step-line {
+  width: 30px;
+  height: 2px;
+  background: #e0e0e0;
+}
+
+.copy-btn {
+  background: #00a8cc;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.copy-btn:hover {
+  background: #0093b3;
+}
+
+.copy-btn.copied {
+  background: #00a650;
+}
+
 .form-group {
   margin-bottom: 20px;
 }
