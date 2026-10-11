@@ -23,7 +23,6 @@ export default function Footer() {
             <li><a href="#"><i className="fas fa-money-bill-wave"></i> Efectivo</a></li>
             <li><a href="#"><i className="fas fa-mobile-alt"></i> MercadoPago</a></li>
             <li><a href="#"><i className="fas fa-university"></i> Transferencia</a></li>
-            <li><a href="#"><i className="fas fa-qrcode"></i> QR</a></li>
           </ul>
         </div>
         <div className="footer-column">
