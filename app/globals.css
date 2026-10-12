@@ -1435,6 +1435,19 @@ img {
   background: #00a650;
 }
 
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 40px;
+  align-items: start;
+}
+
+.checkout-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
 .form-group {
   margin-bottom: 20px;
 }
@@ -1556,6 +1569,14 @@ img {
     display: none;
   }
 
+  .header-btn-user span {
+    display: inline;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .header-btn i {
     font-size: 18px;
   }
@@ -1657,6 +1678,11 @@ img {
 
   .checkout-form {
     padding: 20px;
+  }
+
+  .checkout-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 
   .orders-container {
@@ -1798,6 +1824,10 @@ img {
   .carousel-item {
     min-width: 220px;
     padding: 14px 16px;
+  }
+
+  .checkout-row {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -51,7 +51,7 @@ export default function Header() {
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               {profile?.role !== 'admin' && (
-                <Link href="/mis-pedidos" className="header-btn">
+                <Link href="/mis-pedidos" className="header-btn header-btn-user">
                   <i className="fas fa-user-circle"></i>
                   <span>{profile?.name || user?.email?.split('@')[0] || 'Mi Cuenta'}</span>
                 </Link>

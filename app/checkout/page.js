@@ -207,7 +207,7 @@ export default function CheckoutPage() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '40px', alignItems: 'start' }}>
+      <div className="checkout-grid">
         <form className="checkout-form" onSubmit={handleSubmit}>
           {step === 1 && (
             <>
@@ -266,7 +266,7 @@ export default function CheckoutPage() {
                 <input className="form-control" value={form.address} onChange={update('address')} required />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+              <div className="checkout-row">
                 <div className="form-group">
                   <label>Barrio</label>
                   <input className="form-control" value={form.barrio} onChange={update('barrio')} />
