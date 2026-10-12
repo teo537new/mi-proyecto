@@ -106,6 +106,7 @@ export default function CheckoutPage() {
     if (!form.name.trim()) return alert('Ingresá tu nombre completo.'), false
     if (!form.address.trim()) return alert('Ingresá la dirección de envío.'), false
     if (!form.ciudad.trim()) return alert('Ingresá la ciudad.'), false
+    if (!form.codigo_postal.trim()) return alert('Ingresá el código postal.'), false
     if (!form.phone.trim()) return alert('Ingresá tu teléfono.'), false
     return true
   }
