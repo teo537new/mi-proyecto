@@ -269,7 +269,7 @@ export default function CheckoutPage() {
 
               <div className="checkout-row">
                 <div className="form-group">
-                  <label>Barrio</label>
+                  <label>Barrio (opcional)</label>
                   <input className="form-control" value={form.barrio} onChange={update('barrio')} />
                 </div>
                 <div className="form-group">
@@ -277,7 +277,7 @@ export default function CheckoutPage() {
                   <input className="form-control" value={form.ciudad} onChange={update('ciudad')} required />
                 </div>
                 <div className="form-group">
-                  <label>Partido</label>
+                  <label>Partido (opcional)</label>
                   <input className="form-control" value={form.partido} onChange={update('partido')} />
                 </div>
                 <div className="form-group">
